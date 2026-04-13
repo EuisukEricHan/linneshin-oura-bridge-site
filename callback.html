@@ -24,6 +24,10 @@
             <div id="code" class="code-block">No code found in URL.</div>
           </article>
           <article class="meta-card">
+            <strong>Access Token</strong>
+            <div id="access-token" class="code-block">No access token found in URL.</div>
+          </article>
+          <article class="meta-card">
             <strong>State</strong>
             <div id="state" class="code-block">-</div>
           </article>
@@ -32,7 +36,9 @@
         <div class="stack">
           <h2>Next step</h2>
           <p>
-            Use this code in the token exchange request. Keep it private and do not publish it.
+            For personal local use, you can either exchange the authorization code for a token or
+            use the client-side flow and copy the access token directly. Keep all values private and
+            do not publish them.
           </p>
           <div id="token-example" class="code-block">Waiting for authorization code...</div>
         </div>
@@ -46,13 +52,24 @@
 
     <script>
       const params = new URLSearchParams(window.location.search);
+      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
       const code = params.get('code');
       const state = params.get('state');
+      const accessToken = hashParams.get('access_token');
+      const expiresIn = hashParams.get('expires_in');
+      const scope = hashParams.get('scope');
 
       document.getElementById('code').textContent = code || 'No code found in URL.';
       document.getElementById('state').textContent = state || '-';
+      document.getElementById('access-token').textContent = accessToken || 'No access token found in URL.';
 
-      if (code) {
+      if (accessToken) {
+        document.getElementById('token-example').textContent =
+          `Copy this access token into your local file:\n\n` +
+          `${accessToken}\n\n` +
+          `expires_in=${expiresIn || '-'}\n` +
+          `scope=${scope || '-'}`;
+      } else if (code) {
         document.getElementById('token-example').textContent =
           `curl -X POST https://api.ouraring.com/oauth/token \\\n` +
           `  -d grant_type=authorization_code \\\n` +
@@ -64,4 +81,3 @@
     </script>
   </body>
   </html>
-
