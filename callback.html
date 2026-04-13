@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OAuth Callback | LinnEshIn Oura Bridge</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="panel stack">
+        <div>
+          <p class="eyebrow">OAuth Callback</p>
+          <h1>Authorization Result</h1>
+          <p>
+            If Oura redirected here successfully, the authorization code should appear below. You
+            can copy it and exchange it for an access token.
+          </p>
+        </div>
+
+        <div class="meta-grid">
+          <article class="meta-card">
+            <strong>Authorization Code</strong>
+            <div id="code" class="code-block">No code found in URL.</div>
+          </article>
+          <article class="meta-card">
+            <strong>State</strong>
+            <div id="state" class="code-block">-</div>
+          </article>
+        </div>
+
+        <div class="stack">
+          <h2>Next step</h2>
+          <p>
+            Use this code in the token exchange request. Keep it private and do not publish it.
+          </p>
+          <div id="token-example" class="code-block">Waiting for authorization code...</div>
+        </div>
+
+        <p class="status-warn">
+          This page does not store the code. It only reads the current URL and shows the values in
+          your browser.
+        </p>
+      </section>
+    </main>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      const state = params.get('state');
+
+      document.getElementById('code').textContent = code || 'No code found in URL.';
+      document.getElementById('state').textContent = state || '-';
+
+      if (code) {
+        document.getElementById('token-example').textContent =
+          `curl -X POST https://api.ouraring.com/oauth/token \\\n` +
+          `  -d grant_type=authorization_code \\\n` +
+          `  -d code=${code} \\\n` +
+          `  -d redirect_uri=YOUR_CALLBACK_URL \\\n` +
+          `  -d client_id=YOUR_CLIENT_ID \\\n` +
+          `  -d client_secret=YOUR_CLIENT_SECRET`;
+      }
+    </script>
+  </body>
+  </html>
+
